@@ -22,8 +22,18 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Frontend assets
 RUN npm ci && npm run build
 
-# Ensure sqlite file exists for default config; Render users should switch to Postgres via env
-RUN mkdir -p database && touch database/database.sqlite \
+# Make sure Laravel runtime directories exist and are writable.
+# (.dockerignore strips their placeholder contents, so re-create them here.)
+RUN mkdir -p \
+        storage/framework/cache/data \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/framework/testing \
+        storage/logs \
+        bootstrap/cache \
+        database \
+    && touch database/database.sqlite \
+    && chmod -R 775 storage bootstrap/cache database \
     && chown -R www-data:www-data storage bootstrap/cache database
 
 # Render injects PORT at runtime; 10000 is a common default
