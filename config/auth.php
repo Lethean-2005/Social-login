@@ -6,6 +6,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Superadmin email whitelist
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of email addresses that are automatically granted
+    | admin privileges. `is_admin` is re-synced from this list every time the
+    | user logs in, so removing an email here and having the user log in
+    | again will demote them.
+    */
+
+    'admin_emails' => array_values(array_filter(array_map(
+        fn ($e) => strtolower(trim($e)),
+        explode(',', (string) env('ADMIN_EMAILS', ''))
+    ))),
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Authentication Defaults
     |--------------------------------------------------------------------------
     |

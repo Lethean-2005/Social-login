@@ -24,7 +24,6 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
-        Route::patch('users/{user}/toggle-admin', [AdminUserController::class, 'toggleAdmin'])->name('users.toggle-admin');
         Route::delete('users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
         Route::get('logins', [AdminLoginActivityController::class, 'index'])->name('logins.index');

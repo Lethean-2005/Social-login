@@ -37,4 +37,13 @@ class User extends Authenticatable
         return $this->two_factor_verified_at
             && $this->two_factor_verified_at->greaterThan(now()->subDays(30));
     }
+
+    public function syncAdminFromConfig(): void
+    {
+        $shouldBeAdmin = in_array(strtolower((string) $this->email), config('auth.admin_emails', []), true);
+
+        if ($this->is_admin !== $shouldBeAdmin) {
+            $this->forceFill(['is_admin' => $shouldBeAdmin])->save();
+        }
+    }
 }

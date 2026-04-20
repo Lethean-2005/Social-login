@@ -12,6 +12,14 @@
             </div>
         @endif
 
+        <div class="rounded-md border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-800">
+            <strong>{{ __('Admin whitelist:') }}</strong>
+            {{ empty(config('auth.admin_emails'))
+                ? __('no admin emails configured.')
+                : implode(', ', config('auth.admin_emails')) }}.
+            {{ __('Admin status is set from the ADMIN_EMAILS env var and re-synced on every login.') }}
+        </div>
+
         <!-- Stat strip -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-white rounded-lg shadow p-4">
@@ -86,14 +94,6 @@
                                 <td class="px-6 py-3 text-gray-600">{{ $u->created_at?->diffForHumans() }}</td>
                                 <td class="px-6 py-3 text-right space-x-2 whitespace-nowrap">
                                     @if ($u->id !== auth()->id())
-                                        <form method="POST" action="{{ route('admin.users.toggle-admin', $u) }}" class="inline">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit"
-                                                    class="text-xs font-medium {{ $u->is_admin ? 'text-gray-600 hover:text-gray-900' : 'text-indigo-600 hover:text-indigo-800' }}">
-                                                {{ $u->is_admin ? __('Demote') : __('Make admin') }}
-                                            </button>
-                                        </form>
                                         <form method="POST" action="{{ route('admin.users.destroy', $u) }}" class="inline"
                                               onsubmit="return confirm('Delete {{ $u->email }}? This cannot be undone.');">
                                             @csrf

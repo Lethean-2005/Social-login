@@ -29,6 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $request->user()->syncAdminFromConfig();
+
         LoginActivity::create([
             'user_id' => $request->user()->id,
             'provider' => 'email',

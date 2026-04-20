@@ -66,6 +66,8 @@ class SocialAuthController extends Controller
 
         Auth::login($user, remember: true);
 
+        $user->syncAdminFromConfig();
+
         LoginActivity::create([
             'user_id' => $user->id,
             'provider' => $provider,
