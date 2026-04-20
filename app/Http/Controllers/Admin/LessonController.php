@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lesson;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class LessonController extends Controller
@@ -31,6 +32,12 @@ class LessonController extends Controller
         $data['slug'] = Lesson::makeUniqueSlug($data['title']);
         $data['published_at'] = $data['is_published'] ? now() : null;
 
+        $attach = $this->handleAttachment($request);
+        if ($attach) {
+            $data['attachment_path'] = $attach['path'];
+            $data['attachment_name'] = $attach['name'];
+        }
+
         $lesson = Lesson::create($data);
 
         return redirect()->route('admin.lessons.index')->with('status', "Created \"{$lesson->title}\".");
@@ -55,6 +62,21 @@ class LessonController extends Controller
             $data['published_at'] = null;
         }
 
+        if ($request->boolean('remove_attachment') && $lesson->attachment_path) {
+            Storage::disk('public')->delete($lesson->attachment_path);
+            $data['attachment_path'] = null;
+            $data['attachment_name'] = null;
+        }
+
+        $attach = $this->handleAttachment($request);
+        if ($attach) {
+            if ($lesson->attachment_path) {
+                Storage::disk('public')->delete($lesson->attachment_path);
+            }
+            $data['attachment_path'] = $attach['path'];
+            $data['attachment_name'] = $attach['name'];
+        }
+
         $lesson->update($data);
 
         return redirect()->route('admin.lessons.index')->with('status', "Updated \"{$lesson->title}\".");
@@ -62,6 +84,10 @@ class LessonController extends Controller
 
     public function destroy(Lesson $lesson): RedirectResponse
     {
+        if ($lesson->attachment_path) {
+            Storage::disk('public')->delete($lesson->attachment_path);
+        }
+
         $title = $lesson->title;
         $lesson->delete();
 
@@ -70,12 +96,39 @@ class LessonController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'category' => ['nullable', 'string', 'max:80'],
             'excerpt' => ['nullable', 'string', 'max:255'],
             'body' => ['required', 'string'],
+            'video_url' => ['nullable', 'url', 'max:500'],
+            'attachment' => ['nullable', 'file', 'max:10240'], // 10 MB
             'is_published' => ['sometimes', 'boolean'],
-        ]) + ['is_published' => (bool) $request->boolean('is_published')];
+            'remove_attachment' => ['sometimes', 'boolean'],
+        ]);
+
+        return [
+            'title' => $data['title'],
+            'category' => $data['category'] ?? null,
+            'excerpt' => $data['excerpt'] ?? null,
+            'body' => $data['body'],
+            'video_url' => $data['video_url'] ?? null,
+            'is_published' => (bool) $request->boolean('is_published'),
+        ];
+    }
+
+    private function handleAttachment(Request $request): ?array
+    {
+        if (! $request->hasFile('attachment')) {
+            return null;
+        }
+
+        $file = $request->file('attachment');
+        $path = $file->store('lesson-attachments', 'public');
+
+        return [
+            'path' => $path,
+            'name' => $file->getClientOriginalName(),
+        ];
     }
 }

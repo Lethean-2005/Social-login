@@ -43,5 +43,6 @@ EXPOSE 10000
 # Migrate (non-blocking if no DB yet) then serve
 CMD php artisan config:cache \
     && php artisan route:cache \
+    && php artisan storage:link --force 2>/dev/null || true \
     && php artisan migrate --force --no-interaction || true \
     && php artisan serve --host=0.0.0.0 --port=${PORT}
