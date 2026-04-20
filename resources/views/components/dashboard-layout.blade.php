@@ -114,7 +114,7 @@
     <!-- Main area -->
     <div class="flex-1 flex flex-col min-w-0">
         <!-- Topbar -->
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6">
+        <header class="h-16 bg-white/90 backdrop-blur border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30">
             <div class="flex items-center gap-3">
                 <button @click="sidebarOpen = true" class="md:hidden text-gray-600 hover:text-gray-900">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
