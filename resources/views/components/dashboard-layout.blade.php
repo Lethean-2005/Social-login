@@ -16,10 +16,10 @@
 </head>
 <body class="font-sans antialiased bg-gray-100 text-gray-800">
 
-<div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
+<div x-data="{ sidebarOpen: false }" class="min-h-screen">
 
-    <!-- Sidebar (desktop) -->
-    <aside class="hidden md:flex md:flex-col w-64 bg-gray-900 text-gray-100 sticky top-0 h-screen self-start shrink-0">
+    <!-- Sidebar (desktop) — fixed fullscreen on the left -->
+    <aside class="hidden md:flex md:flex-col fixed inset-y-0 left-0 w-64 bg-gray-900 text-gray-100 z-20">
         <div class="h-16 flex items-center px-6 border-b border-gray-800">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-lg font-semibold">
                 <svg class="h-7 w-7 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -111,8 +111,8 @@
         </nav>
     </aside>
 
-    <!-- Main area -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <!-- Main area, offset to make room for the fixed sidebar on desktop -->
+    <div class="md:ml-64 flex flex-col min-h-screen min-w-0">
         <!-- Topbar -->
         <header class="h-16 bg-white/90 backdrop-blur border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30">
             <div class="flex items-center gap-3">
