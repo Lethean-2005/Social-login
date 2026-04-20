@@ -28,9 +28,11 @@ class ShopController extends Controller
         ]);
     }
 
-    public function show(Product $product): View
+    public function show(Request $request, Product $product): View
     {
         abort_unless($product->is_published, 404);
+
+        $product->load(['reviews.user']);
 
         return view('shop.show', [
             'product' => $product,
@@ -38,6 +40,9 @@ class ShopController extends Controller
                 ->where('id', '!=', $product->id)
                 ->when($product->category, fn ($q) => $q->where('category', $product->category))
                 ->latest()->take(4)->get(),
+            'myReview' => $request->user()
+                ? $product->reviews->firstWhere('user_id', $request->user()->id)
+                : null,
         ]);
     }
 }

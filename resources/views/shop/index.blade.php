@@ -40,6 +40,12 @@
                                 <span class="self-start inline-flex rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 mb-1">{{ $product->category }}</span>
                             @endif
                             <h3 class="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2">{{ $product->name }}</h3>
+                            @if ($product->review_count > 0)
+                                <div class="mt-1 flex items-center gap-1">
+                                    <x-stars :rating="$product->average_rating" />
+                                    <span class="text-xs text-gray-500">({{ $product->review_count }})</span>
+                                </div>
+                            @endif
                             <div class="mt-auto pt-3 flex items-center justify-between">
                                 <span class="text-lg font-bold text-gray-900">{{ $product->formatted_price }}</span>
                                 @if ($product->stock <= 0)

@@ -21,6 +21,18 @@
                 @endif
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $product->name }}</h1>
 
+                @if ($product->review_count > 0)
+                    <a href="#reviews" class="mt-2 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-indigo-600">
+                        <x-stars :rating="$product->average_rating" size="h-5 w-5" />
+                        <span class="font-medium">{{ $product->average_rating }}</span>
+                        <span class="text-gray-500">({{ $product->review_count }} {{ Str::plural('review', $product->review_count) }})</span>
+                    </a>
+                @else
+                    <a href="#reviews" class="mt-2 inline-flex items-center gap-2 text-sm text-indigo-600 hover:underline">
+                        {{ __('Be the first to review') }}
+                    </a>
+                @endif
+
                 <div class="mt-3 text-3xl font-bold text-gray-900">{{ $product->formatted_price }}</div>
 
                 <div class="mt-4 text-sm {{ $product->stock > 0 ? 'text-green-700' : 'text-red-600' }}">
@@ -54,6 +66,107 @@
                 @endif
             </div>
         </div>
+
+        <!-- Reviews -->
+        <section id="reviews" class="bg-white rounded-lg shadow p-8">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-xl font-semibold text-gray-900">{{ __('Customer reviews') }}</h2>
+                @if ($product->review_count > 0)
+                    <div class="flex items-center gap-2">
+                        <x-stars :rating="$product->average_rating" size="h-5 w-5" />
+                        <span class="font-semibold text-gray-900">{{ $product->average_rating }}</span>
+                        <span class="text-sm text-gray-500">/ 5</span>
+                    </div>
+                @endif
+            </div>
+
+            @if (session('status'))
+                <div class="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-800">{{ session('status') }}</div>
+            @endif
+
+            <!-- Review form -->
+            <div class="border border-gray-200 rounded-lg p-5 mb-6 bg-gray-50">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                    {{ $myReview ? __('Update your review') : __('Write a review') }}
+                </h3>
+                <form method="POST" action="{{ route('reviews.store', $product) }}" x-data="{ rating: {{ $myReview->rating ?? 5 }}, hover: 0 }">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-xs uppercase text-gray-500 mb-1">{{ __('Your rating') }}</label>
+                        <div class="flex items-center gap-1" @mouseleave="hover = 0">
+                            <template x-for="i in 5">
+                                <button type="button"
+                                        @click="rating = i"
+                                        @mouseenter="hover = i"
+                                        class="focus:outline-none">
+                                    <svg class="h-7 w-7 transition"
+                                         :class="(hover || rating) >= i ? 'text-amber-400' : 'text-gray-300'"
+                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.175 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.05 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+                                    </svg>
+                                </button>
+                            </template>
+                            <span class="ml-2 text-sm text-gray-600" x-text="rating + ' / 5'"></span>
+                        </div>
+                        <input type="hidden" name="rating" :value="rating">
+                        <x-input-error :messages="$errors->get('rating')" class="mt-2" />
+                    </div>
+                    <div>
+                        <label for="comment" class="block text-xs uppercase text-gray-500 mb-1">{{ __('Your review (optional)') }}</label>
+                        <textarea id="comment" name="comment" rows="3"
+                                  class="block w-full border-gray-300 rounded-md shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                  placeholder="What did you think?">{{ old('comment', $myReview->comment ?? '') }}</textarea>
+                        <x-input-error :messages="$errors->get('comment')" class="mt-2" />
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                        @if ($myReview)
+                            <form method="POST" action="{{ route('reviews.destroy', $myReview) }}" class="inline"
+                                  onsubmit="return confirm('Delete your review?');">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-xs text-red-600 hover:text-red-800 underline">{{ __('Delete my review') }}</button>
+                            </form>
+                        @else<span></span>@endif
+                        <x-primary-button>{{ $myReview ? __('Update review') : __('Submit review') }}</x-primary-button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Reviews list -->
+            @if ($product->reviews->count())
+                <ul class="space-y-5">
+                    @foreach ($product->reviews as $r)
+                        <li class="flex gap-4">
+                            @if ($r->user?->avatar)
+                                <img src="{{ $r->user->avatar }}" referrerpolicy="no-referrer" class="h-10 w-10 rounded-full shrink-0" alt="">
+                            @else
+                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold shrink-0">
+                                    {{ strtoupper(substr($r->user?->name ?? '?', 0, 1)) }}
+                                </div>
+                            @endif
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-medium text-gray-900">{{ $r->user?->name ?? __('Customer') }}</span>
+                                    <x-stars :rating="$r->rating" />
+                                    <span class="text-xs text-gray-500">· {{ $r->created_at->diffForHumans() }}</span>
+                                </div>
+                                @if ($r->comment)
+                                    <p class="mt-1 text-sm text-gray-700 whitespace-pre-line">{{ $r->comment }}</p>
+                                @endif
+                                @if (auth()->id() === $r->user_id || auth()->user()?->is_admin)
+                                    <form method="POST" action="{{ route('reviews.destroy', $r) }}" class="inline mt-1"
+                                          onsubmit="return confirm('Delete this review?');">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="text-xs text-red-600 hover:text-red-800 underline">{{ __('Delete') }}</button>
+                                    </form>
+                                @endif
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="text-sm text-gray-500">{{ __('No reviews yet. Be the first!') }}</p>
+            @endif
+        </section>
 
         @if ($related->count())
             <section>

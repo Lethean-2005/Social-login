@@ -9,6 +9,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ConnectionsController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,10 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Reviews
+    Route::post('/shop/{product}/review', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('users', [AdminUserController::class, 'index'])->name('users.index');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -51,7 +52,22 @@ class Product extends Model
     {
         return $this->image_path
             ? Storage::disk('public')->url($this->image_path)
-            : 'https://placehold.co/600x400/e0e7ff/6366f1?text='.urlencode(Str::limit($this->name, 20));
+            : 'https://picsum.photos/seed/'.urlencode($this->slug ?: 'product').'/600/600';
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    public function getAverageRatingAttribute(): float
+    {
+        return round((float) $this->reviews()->avg('rating'), 1);
+    }
+
+    public function getReviewCountAttribute(): int
+    {
+        return (int) $this->reviews()->count();
     }
 
     public static function makeUniqueSlug(string $name, ?int $ignoreId = null): string
