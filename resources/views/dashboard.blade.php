@@ -12,7 +12,7 @@
     <!-- Welcome banner -->
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg shadow p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         @if ($user->avatar)
-            <img src="{{ $user->avatar }}" alt="avatar" class="h-16 w-16 rounded-full ring-2 ring-white/40">
+            <img src="{{ $user->avatar }}" alt="avatar" referrerpolicy="no-referrer" class="h-16 w-16 rounded-full ring-2 ring-white/40">
         @else
             <div class="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-semibold">
                 {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -62,7 +62,7 @@
                                 <td class="px-6 py-3">
                                     <div class="flex items-center gap-3">
                                         @if ($recent->avatar)
-                                            <img src="{{ $recent->avatar }}" class="h-8 w-8 rounded-full" alt="">
+                                            <img src="{{ $recent->avatar }}" class="h-8 w-8 rounded-full" alt="" referrerpolicy="no-referrer">
                                         @else
                                             <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600">
                                                 {{ strtoupper(substr($recent->name, 0, 1)) }}

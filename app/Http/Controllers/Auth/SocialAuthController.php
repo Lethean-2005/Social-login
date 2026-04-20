@@ -65,6 +65,11 @@ class SocialAuthController extends Controller
 
         Auth::login($user, remember: true);
 
+        if ($user->twoFactorRecentlyVerified()) {
+            request()->session()->put('two_factor.verified', true);
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
         $code = TwoFactorController::sendCode(request());
 
         return redirect()->route('two-factor.show')

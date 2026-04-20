@@ -64,6 +64,11 @@ class TwoFactorController extends Controller
         $request->session()->put('two_factor.verified', true);
         $request->session()->regenerate();
 
+        $user = $request->user();
+        if ($user) {
+            $user->forceFill(['two_factor_verified_at' => now()])->save();
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

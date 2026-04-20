@@ -26,7 +26,14 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'two_factor_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function twoFactorRecentlyVerified(): bool
+    {
+        return $this->two_factor_verified_at
+            && $this->two_factor_verified_at->greaterThan(now()->subDays(30));
     }
 }

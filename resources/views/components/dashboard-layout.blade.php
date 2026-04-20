@@ -106,7 +106,7 @@
             <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open" class="flex items-center gap-2 rounded-full hover:bg-gray-100 p-1 pr-3">
                     @if (auth()->user()->avatar)
-                        <img src="{{ auth()->user()->avatar }}" alt="avatar" class="h-8 w-8 rounded-full">
+                        <img src="{{ auth()->user()->avatar }}" alt="avatar" referrerpolicy="no-referrer" class="h-8 w-8 rounded-full">
                     @else
                         <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-semibold">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}

@@ -28,6 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()?->twoFactorRecentlyVerified()) {
+            $request->session()->put('two_factor.verified', true);
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
         $code = TwoFactorController::sendCode($request);
 
         return redirect()->route('two-factor.show')
@@ -47,6 +52,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->forget(['two_factor.code', 'two_factor.expires_at', 'two_factor.verified']);
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

@@ -35,7 +35,7 @@
                     <!-- Icon / avatar -->
                     <div class="shrink-0">
                         @if ($c['avatar'])
-                            <img src="{{ $c['avatar'] }}" alt="{{ $c['label'] }} avatar" class="h-14 w-14 rounded-full ring-2 ring-gray-100">
+                            <img src="{{ $c['avatar'] }}" alt="{{ $c['label'] }} avatar" referrerpolicy="no-referrer" class="h-14 w-14 rounded-full ring-2 ring-gray-100">
                         @else
                             <div class="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center">
                                 @if ($c['key'] === 'google')
