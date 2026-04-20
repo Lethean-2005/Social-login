@@ -19,7 +19,7 @@
 <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
 
     <!-- Sidebar (desktop) -->
-    <aside class="hidden md:flex md:flex-col w-64 bg-gray-900 text-gray-100">
+    <aside class="hidden md:flex md:flex-col w-64 bg-gray-900 text-gray-100 sticky top-0 h-screen">
         <div class="h-16 flex items-center px-6 border-b border-gray-800">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-lg font-semibold">
                 <svg class="h-7 w-7 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -29,7 +29,7 @@
             </a>
         </div>
 
-        <nav class="flex-1 px-3 py-4 space-y-1">
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             <x-sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12L12 2.25 21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
                 {{ __('Dashboard') }}
@@ -95,7 +95,7 @@
            x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
            x-transition:leave="transition-transform ease-in duration-150"
            x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
-           class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-gray-100 md:hidden">
+           class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-gray-100 md:hidden flex flex-col overflow-y-auto">
         <div class="h-16 flex items-center px-6 border-b border-gray-800 justify-between">
             <span class="text-lg font-semibold">{{ config('app.name') }}</span>
             <button @click="sidebarOpen = false" class="text-gray-400 hover:text-white">
