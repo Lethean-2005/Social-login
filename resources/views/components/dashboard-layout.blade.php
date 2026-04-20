@@ -19,7 +19,7 @@
 <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
 
     <!-- Sidebar (desktop) -->
-    <aside class="hidden md:flex md:flex-col w-64 bg-gray-900 text-gray-100 sticky top-0 h-screen">
+    <aside class="hidden md:flex md:flex-col w-64 bg-gray-900 text-gray-100 sticky top-0 h-screen self-start shrink-0">
         <div class="h-16 flex items-center px-6 border-b border-gray-800">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-lg font-semibold">
                 <svg class="h-7 w-7 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
