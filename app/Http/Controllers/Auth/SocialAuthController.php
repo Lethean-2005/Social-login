@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoginActivity;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -64,6 +65,14 @@ class SocialAuthController extends Controller
         }
 
         Auth::login($user, remember: true);
+
+        LoginActivity::create([
+            'user_id' => $user->id,
+            'provider' => $provider,
+            'ip_address' => request()->ip(),
+            'user_agent' => substr((string) request()->userAgent(), 0, 255),
+            'logged_in_at' => now(),
+        ]);
 
         if ($user->twoFactorRecentlyVerified()) {
             request()->session()->put('two_factor.verified', true);

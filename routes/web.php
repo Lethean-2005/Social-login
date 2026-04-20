@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LoginActivityController as AdminLoginActivityController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ConnectionsController;
 use App\Http\Controllers\ProfileController;
@@ -25,6 +26,8 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
         Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
         Route::patch('users/{user}/toggle-admin', [AdminUserController::class, 'toggleAdmin'])->name('users.toggle-admin');
         Route::delete('users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        Route::get('logins', [AdminLoginActivityController::class, 'index'])->name('logins.index');
     });
 });
 
