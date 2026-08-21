@@ -1,58 +1,148 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Social-login Shop
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 13 e-commerce application featuring **Google OAuth login**, **email-based two-factor authentication (2FA)**, a full **shopping flow** (cart → checkout → orders), and an **admin panel**.
 
-## About Laravel
+Built with: Laravel 13 · PHP 8.3 · Laravel Socialite · Tailwind CSS · Alpine.js · Vite · SQLite
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Area | Details |
+|---|---|
+| 🔐 Google OAuth | One-click sign-in via Laravel Socialite |
+| 📧 Passwordless email login | Enter just your email to receive a login code |
+| 🛡️ Two-Factor Auth | 6-digit code emailed after every new login (valid 10 min, trusted device for 30 days) |
+| 🛍️ Shop | Product catalog with categories, stock, ratings & reviews |
+| 🛒 Cart & Checkout | Session-based cart, order creation with stock deduction |
+| 👤 Profile | Edit profile, manage connected Google account, delete account |
+| 🧑‍💼 Admin panel | Manage products, orders, users + view login activity log |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🔄 Application Flows
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Authentication flow
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```mermaid
+flowchart TD
+    A[Visitor] --> B{Login method}
+    B -->|Google| C[GET /auth/google/redirect]
+    C --> D[Google consent screen]
+    D --> E[GET /auth/google/callback]
+    B -->|Email| F[POST /login - passwordless]
+    E --> G{User exists?}
+    F --> H[Send 6-digit code to email]
+    G -->|No| I[Create user from Google profile<br/>email auto-verified]
+    G -->|Yes| J[Load existing user]
+    I --> H
+    J --> H
+    H --> K[/verify-code page/]
+    K --> L{Code correct & not expired?}
+    L -->|Yes| M[Session marked verified<br/>two_factor_verified_at = now]
+    L -->|No / expired| K
+    M --> N[Dashboard]
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+> 💡 After verifying once, the user is trusted for **30 days** (`two_factor_verified_at`) — subsequent logins skip the code step.
+>
+> 💡 In local development the code is shown on-screen (`dev_code`) and also written to `storage/logs/laravel.log`.
 
-## Contributing
+### Shopping flow
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```mermaid
+flowchart LR
+    A[Landing / Shop] --> B[Product page<br/>reviews & rating]
+    B --> C[Add to cart]
+    C --> D[Cart page<br/>update qty / remove]
+    D --> E[Checkout]
+    E --> F[Order created<br/>stock deducted]
+    F --> G[Orders list / detail]
+    B --> H[Leave a review 1-5 stars]
+```
 
-## Code of Conduct
+### Admin flow
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```mermaid
+flowchart LR
+    A[Login] --> B{Email in<br/>ADMIN_EMAILS?}
+    B -->|Yes| C[is_admin = true]
+    B -->|No| D[Regular customer]
+    C --> E["/admin area:<br/>products CRUD · orders status<br/>users · login activity"]
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 Getting Started
 
-## License
+### Requirements
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- PHP >= 8.3
+- Composer
+- Node.js >= 20
+
+### Installation
+
+```bash
+composer install
+npm install
+
+cp .env.example .env        # Windows: copy .env.example .env
+php artisan key:generate
+php artisan migrate --seed  # creates SQLite DB + sample products
+```
+
+### Configuration (.env)
+
+| Variable | Purpose |
+|---|---|
+| `ADMIN_EMAILS` | Comma-separated emails that get admin access |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth credentials from [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `GOOGLE_REDIRECT_URI` | Must match exactly, e.g. `http://localhost:8000/auth/google/callback` |
+| `MAIL_MAILER=log` | Local dev: emails go to `storage/logs/laravel.log` |
+
+> ⚠️ `redirect_uri_mismatch` errors mean this URI doesn't byte-for-byte match what's registered in Google Cloud Console (check port, http/https, trailing slash).
+
+### Run
+
+```bash
+composer dev    # server + queue + logs + vite all-in-one
+# or separately:
+php artisan serve
+npm run dev
+```
+
+Open http://localhost:8000
+
+---
+
+## 🧪 Testing
+
+```bash
+composer test   # or: php artisan test
+```
+
+25 tests cover registration, login, 2FA-gated routes, profile management, and password flows.
+
+## 🛠️ Useful commands
+
+```bash
+php artisan user:make-admin someone@email.com            # promote/create an admin
+php artisan migrate:fresh --seed                         # rebuild clean database
+php artisan pail                                         # watch request logs
+```
+
+## 📁 Key structure
+
+```
+app/
+├── Http/Controllers/Auth/SocialAuthController.php   # Google OAuth in/out
+├── Http/Controllers/Auth/TwoFactorController.php    # code send/verify/resend
+├── Http/Middleware/EnsureTwoFactorVerified.php      # gates protected pages
+├── Http/Middleware/EnsureIsAdmin.php                # gates /admin
+├── Services/Cart.php                                # session cart logic
+└── Models/                                          # User, Product, Order, Review...
+resources/views/                                     # Blade templates
+database/migrations/                                 # schema
+routes/web.php · routes/auth.php                     # all routes
+```

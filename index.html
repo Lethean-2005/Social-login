@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevLaunchpad - Junior Onboarding</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <div class="max-w-4xl mx-auto px-6 py-12">
+
+        <!-- Header -->
+        <header class="mb-10 space-y-2">
+            <span class="text-xs font-semibold tracking-wider uppercase text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Onboarding Guide</span>
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900">Project Setup & Local Installation</h1>
+            <p class="text-slate-600">Follow this official walkthrough to get your local environment ready and the project running smoothly.</p>
+        </header>
+
+        <!-- Main Content Flow -->
+        <main class="space-y-8">
+
+            <!-- Step 1 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-3">
+                <div class="flex items-center space-x-3">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold">1</span>
+                    <h2 class="font-semibold text-slate-900 text-lg">Clone the Repository</h2>
+                </div>
+                <p class="text-sm text-slate-600">Open your terminal and clone the project source code to your machine:</p>
+                <div class="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-sm">
+                    <code>git clone https://github.com/your-org/project-name.git</code>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-3">
+                <div class="flex items-center space-x-3">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold">2</span>
+                    <h2 class="font-semibold text-slate-900 text-lg">Configure Environment Variables</h2>
+                </div>
+                <p class="text-sm text-slate-600">Duplicate the example configuration file and update it with your local settings:</p>
+                <div class="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-sm space-y-1">
+                    <code>cd project-name</code><br>
+                    <code>cp .env.example .env</code>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-3">
+                <div class="flex items-center space-x-3">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold">3</span>
+                    <h2 class="font-semibold text-slate-900 text-lg">Install Dependencies & Run</h2>
+                </div>
+                <p class="text-sm text-slate-600">Install required packages and boot up the development server:</p>
+                <div class="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-sm space-y-1">
+                    <code>npm install</code><br>
+                    <code>npm run dev</code>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
